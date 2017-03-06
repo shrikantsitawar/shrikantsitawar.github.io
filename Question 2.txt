@@ -1,0 +1,22 @@
+import java.util.*;
+public class MaxNoOfWords {	
+	public static void main(String[] args) throws Exception {
+		String str = new Scanner(System.in).nextLine();
+		Stack<Integer> st = new Stack<Integer>();
+		
+		StringTokenizer stk1 = new StringTokenizer(str,".?!");
+		
+		int i = stk1.countTokens();
+		for(int l=1 ; l<=i ; l++){
+			StringTokenizer stk2 = new StringTokenizer(stk1.nextToken());
+			
+			int i1 = stk2.countTokens();
+			for(int l1=1 ; l1<=i1 ; l1++){
+			st.add(i1);
+			}
+		}
+		Collections.sort(st);
+		System.out.println(st.peek());
+	}
+
+}

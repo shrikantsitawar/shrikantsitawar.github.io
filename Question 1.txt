@@ -1,0 +1,212 @@
+1) RegistrationForm.html
+
+<html>
+<head>
+<title>RegistrationForm</title>
+</head>
+<h1>Registration Form</h1>
+
+<body>
+<form action="SaveForm.jsp">
+  <table>
+    <tr>
+      <td align="right">UserName</td>
+      <td align="left"><input type ="text" id ="UName"></td>
+    </tr>
+<tr>
+      <td align="right">Password</td>
+      <td align="left"><input type ="password" id= "pass1"></td>
+    </tr>
+<tr>
+      <td align="right">ConfirmPassword</td>
+      <td align="left"><input type ="password" id="Pass2"></td>
+    </tr>
+<tr>
+      <td align="right">FirstName</td>
+      <td align="left"><input type ="text" id="FName"></td>
+    </tr>
+<tr>
+      <td align="right">LastName</td>
+      <td align="left"><input type ="text" id="LName"></td>
+    </tr>
+<tr>
+      <td align="right">Email</td>
+      <td align="left"><input type ="email" id="Email"></td>
+    </tr>
+<tr>
+      <td align="right">Phone No.</td>
+      <td align="left"><input type ="text" id="PNo"></td>
+    </tr>
+<tr>
+      <td align="right">Location</td>
+      <td align="left"><input type ="text" id="Loc"></td>
+    </tr>
+<br/>
+<tr>
+      <td></td><td align="left"><input type="submit" name="SaveButton" value="Save"  />
+		              <input type = "reset" name="Reset" value="Reset"/></td>
+</tr>
+</form>
+<form action="List.jsp">
+<input type="submit" name="Show all" value="Show all"  />
+</form>
+</html>
+
+
+
+2) SaveForm.jsp
+
+/*pre-requisites :-
+*RDBMS : MySQL Workbench
+*UserName of database : Shrikant
+*Password of database : 1992
+*TableName : records
+*/
+
+<%@page import = 'java.sql.*,java.util.*' %>
+
+<%
+String UName = request.getParameter("UName");
+String Password1 = request.getParameter("Pass1");
+String Password2 = request.getParameter("Pass2");
+String FName = request.getParameter("FName");
+String LName = request.getParameter("LName");
+String Email = request.getParameter("Email");
+String PNo = request.getParameter("PNo");
+String Location = request.getParameter("Loc");
+
+Class.forName("com.mysql.jdbc.Driver");
+
+String url = "jdbc:mysql://localhost/test";
+String user = "shrikant"; 
+String pwd =  "1992";
+
+Connection con = DriverManager.getConnection(url,user,pwd);
+
+String sql = "insert into records values(?,?,?,?,?,?,?)";
+
+PreparedStatement ps = con.prepareStatement(sql);
+
+ps.setString(1,UName);
+if(Password1.equals(Password2)){ps.setString(2,Password1);}
+else{throw new ArithmeticException("Password Not Match");}
+ps.setString(3,FName);
+ps.setString(4,LName);
+ps.setString(5,Email);
+ps.setString(6,PNo);
+ps.setString(7,Location);
+
+ps.executeUpdate();
+ps.close();
+con.close();
+
+%>
+<h3>Saved Successfully...!!!</h3>
+
+
+
+3) List.jsp
+
+<%@page import = 'java.sql.*,java.util.*' %>
+
+<%
+System.out.println("Host:" + request.getRemoteHost());
+if(request.getRemoteHost().contains("192.168.43")){
+	response.sendRedirect("RegistrationForm.html");
+}
+response.setHeader("Refresh", "5");
+
+Class.forName("com.mysql.jdbc.Driver");
+
+String url = "jdbc:mysql://localhost/test";
+String user = "shrikant"; 
+String pwd =  "1992";
+
+Connection con = DriverManager.getConnection(url,user,pwd);
+
+Statement st = con.createStatement();
+ResultSet rs = st.executeQuery("select * from records");
+
+ArrayList<Records> list = new Arraylist<Records>();
+
+while(rs.next()){
+	String FName = rs.getString(1);
+	String LName = rs.getString(2);
+	String Email = rs.getString(3);
+	String PNo = rs.getString(4);
+	String Location = rs.getString(5);
+
+	Record r = new Record(FName,LName,Email,PNo,Location);
+	list.add(r);
+}
+
+st.close();
+con.close();
+%>
+
+<html>
+<table border = '1' align = centre>
+<tr>
+<th>FirstName</th>
+<th>LastName</th>
+<th>Email</th>
+<th>Phone No.</th>
+<th>Location</th>
+</tr>
+
+<% for(Record r: list){ %>
+<tr>
+<td><% =r.getFName() %></td>
+<td><% =r.getLName() %></td>
+<td><% =r.getEmail() %></td>
+<td><% =r.getPNo() %></td>
+<td><% =r.getLocation() %></td>
+<% } %>
+</table>
+</html>
+
+
+4) Record.java
+
+
+public class Record {
+	private String FName,LName,Email,PNo,Location;
+	Record(){}
+	Record(String FName,String LName,String Email,String PNo,String Location){
+		this.FName = FName;
+		this.LName = LName;
+		this.Email = Email;
+		this.PNo = PNo;
+		this.Location = Location;
+	}
+	public String getFName() {
+		return FName;
+	}
+	public void setFName(String fName) {
+		FName = fName;
+	}
+	public String getLName() {
+		return LName;
+	}
+	public void setLName(String lName) {
+		LName = lName;
+	}
+	public String getEmail() {
+		return Email;
+	}
+	public void setEmail(String email) {
+		Email = email;
+	}
+	public String getPNo() {
+		return PNo;
+	}
+	public void setPNo(String pNo) {
+		PNo = pNo;
+	}
+	public String getLocation() {
+		return Location;
+	}
+	public void setLocation(String location) {
+		Location = location;
+	}		
+}

@@ -1,0 +1,23 @@
+select d.Dname as "DEPATMENT NAME:",
+(select count(*) as "NUMBER OF EMPLOYEE" from Employee)
+from Department d,Employee e
+where d.deptNo = e.deptNo;
+
+
+create table Employee
+(
+EmpNo char(3) primary key,
+Ename varchar2(15),
+Job varchar2(10),
+MGR varchar2(10),
+Hiredate date,
+Salary number(6,2),
+DeptNo varchar2(10) constraint FK_DeptNo_emp forign key (DeptNo) references Department(DeptNo)
+);
+
+create table Department
+(
+DeptNo varchar2(10) primary key,
+Dname varchar2(15),
+Location varchar2(10)
+);
